@@ -1,0 +1,21 @@
+UserSchema.methods.update = function(data, callback) {
+    	var loggedemail = this.email;
+    	var userobj 	= this;
+    	User.find({
+    				$and:[
+    					{email:data.email},
+    					{email:{$ne:loggedemail}}	
+    				]
+				}, function(err, user) {
+					if (err) {
+						return callback(err);
+					}
+					if (Object.keys(user).length > 0) {
+							//return callback(null, user);
+							return callback(app.newTSVError('Email is already in use.')); 
+					}
+			_.extend(userobj, data);
+			userobj.save(callback);
+			return callback(null);
+		});
+    };
